@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态作品集网站</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#home">我的作品集</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">关于我</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#portfolio" class="nav-link">作品集</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#skills" class="nav-link">技能</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">联系我</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 首页部分 -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">欢迎来到我的作品集</h1>
+            <p class="hero-subtitle">创意设计师 & 前端开发者</p>
+            <button class="cta-button" onclick="scrollToSection('portfolio')">查看作品</button>
+        </div>
+        <div class="hero-image">
+            <div class="floating-elements">
+                <div class="floating-element"></div>
+                <div class="floating-element"></div>
+                <div class="floating-element"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我部分 -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">关于我</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>我是一名充满热情的设计师和开发者，专注于创建美观且功能强大的数字体验。</p>
+                    <p>拥有5年以上的行业经验，擅长将创意想法转化为现实。</p>
+                    <div class="stats">
+                        <div class="stat">
+                            <h3>50+</h3>
+                            <p>完成项目</p>
+                        </div>
+                        <div class="stat">
+                            <h3>30+</h3>
+                            <p>满意客户</p>
+                        </div>
+                        <div class="stat">
+                            <h3>5+</h3>
+                            <p>年经验</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品集部分 -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <h2 class="section-title">我的作品</h2>
+            
+            <!-- 搜索和筛选区域 -->
+            <div class="portfolio-controls">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索作品..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <div class="sort-controls">
+                    <select id="sortSelect" class="sort-select">
+                        <option value="default">默认排序</option>
+                        <option value="date-desc">最新优先</option>
+                        <option value="date-asc">最旧优先</option>
+                        <option value="title-asc">标题 A-Z</option>
+                        <option value="title-desc">标题 Z-A</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- 分类导航 -->
+            <nav class="category-nav" id="categoryNav">
+                <!-- 分类按钮将通过JavaScript动态生成 -->
+            </nav>
+            
+            <!-- 作品网格 -->
+            <div id="portfolioGrid" class="portfolio-grid">
+                <div class="loading">正在加载作品...</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 模态框 -->
+    <div id="portfolioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalImage" class="modal-image"></div>
+                <div id="modalCategory" class="card-category"></div>
+                <p id="modalDescription" class="modal-description"></p>
+                <div id="modalTechStack" class="modal-tech-stack"></div>
+                <div id="modalLinks" class="modal-links"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 技能部分 -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <h2 class="section-title">我的技能</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <i class="fab fa-html5"></i>
+                    </div>
+                    <h3>HTML/CSS</h3>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="90"></div>
+                    </div>
+                    <span>90%</span>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <i class="fab fa-js"></i>
+                    </div>
+                    <h3>JavaScript</h3>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="85"></div>
+                    </div>
+                    <span>85%</span>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <i class="fab fa-react"></i>
+                    </div>
+                    <h3>React</h3>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="80"></div>
+                    </div>
+                    <span>80%</span>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3>UI/UX设计</h3>
+                    <div class="skill-bar">
+                        <div class="skill-progress" data-width="88"></div>
+                    </div>
+                    <span>88%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我部分 -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">联系我</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h3>邮箱</h3>
+                            <p>3657163188@qq.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h3>电话</h3>
+                            <p>+86 19887409814</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>地址</h3>
+                            <p>中国，曲靖</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="您的姓名" required>
+                    <input type="email" placeholder="您的邮箱" required>
+                    <textarea placeholder="您的消息" rows="5" required></textarea>
+                    <button type="submit">发送消息</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 动态作品集网站. 保留所有权利.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-weixin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

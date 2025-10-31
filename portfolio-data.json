@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "作品集数据结构",
+  "description": "作品集项目的标准化数据结构",
+  "type": "object",
+  "properties": {
+    "portfolio": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "category", "image", "description", "techStack"],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "唯一标识符，正整数",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "作品标题",
+            "minLength": 2,
+            "maxLength": 100
+          },
+          "category": {
+            "type": "string",
+            "description": "作品分类",
+            "enum": ["UI设计", "插画", "网页设计", "移动应用", "品牌设计", "摄影", "视频制作", "3D建模", "平面设计", "用户体验设计"]
+          },
+          "image": {
+            "type": "string",
+            "description": "作品图片URL",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string",
+            "description": "作品简短描述",
+            "minLength": 10,
+            "maxLength": 500
+          },
+          "techStack": {
+            "type": "array",
+            "description": "技术标签数组",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "demoUrl": {
+            "type": "string",
+            "description": "在线演示链接（可选）",
+            "format": "uri"
+          },
+          "githubUrl": {
+            "type": "string",
+            "description": "GitHub仓库链接（可选）",
+            "format": "uri"
+          },
+          "completionDate": {
+            "type": "string",
+            "description": "完成日期（YYYY-MM-DD格式）",
+            "format": "date"
+          },
+          "featured": {
+            "type": "boolean",
+            "description": "是否为重点展示作品",
+            "default": false
+          },
+          "tags": {
+            "type": "array",
+            "description": "额外标签（可选）",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  },
+  "required": ["portfolio"]
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分类筛选功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>分类筛选功能测试</h1>
+    
+    <div id="testResults">
+        <div class="test-result info">正在测试分类筛选功能...</div>
+    </div>
+
+    <script>
+        // 测试数据
+        const testData = {
+            portfolio: [
+                { id: 1, title: "测试项目1", category: "UI设计" },
+                { id: 2, title: "测试项目2", category: "网页设计" },
+                { id: 3, title: "测试项目3", category: "UI设计" },
+                { id: 4, title: "测试项目4", category: "插画" }
+            ]
+        };
+
+        const testResults = document.getElementById('testResults');
+        
+        // 测试1: 获取所有分类
+        function testGetAllCategories() {
+            const categories = ['全部'];
+            testData.portfolio.forEach(item => {
+                if (!categories.includes(item.category)) {
+                    categories.push(item.category);
+                }
+            });
+            
+            const expected = ['全部', 'UI设计', '网页设计', '插画'];
+            const passed = JSON.stringify(categories.sort()) === JSON.stringify(expected.sort());
+            
+            testResults.innerHTML += `
+                <div class="test-result ${passed ? 'success' : 'error'}">
+                    <strong>测试1: 获取所有分类</strong><br>
+                    期望: ${JSON.stringify(expected)}<br>
+                    实际: ${JSON.stringify(categories)}<br>
+                    结果: ${passed ? '✓ 通过' : '✗ 失败'}
+                </div>
+            `;
+            
+            return passed;
+        }
+
+        // 测试2: 筛选特定分类
+        function testFilterByCategory() {
+            const category = 'UI设计';
+            const filteredItems = testData.portfolio.filter(item => item.category === category);
+            
+            const expectedCount = 2;
+            const passed = filteredItems.length === expectedCount && 
+                          filteredItems.every(item => item.category === category);
+            
+            testResults.innerHTML += `
+                <div class="test-result ${passed ? 'success' : 'error'}">
+                    <strong>测试2: 筛选"UI设计"分类</strong><br>
+                    期望数量: ${expectedCount}<br>
+                    实际数量: ${filteredItems.length}<br>
+                    所有项目分类正确: ${filteredItems.every(item => item.category === category) ? '是' : '否'}<br>
+                    结果: ${passed ? '✓ 通过' : '✗ 失败'}
+                </div>
+            `;
+            
+            return passed;
+        }
+
+        // 测试3: 筛选"全部"分类
+        function testFilterAllCategory() {
+            const filteredItems = testData.portfolio; // "全部"应该返回所有项目
+            
+            const expectedCount = 4;
+            const passed = filteredItems.length === expectedCount;
+            
+            testResults.innerHTML += `
+                <div class="test-result ${passed ? 'success' : 'error'}">
+                    <strong>测试3: 筛选"全部"分类</strong><br>
+                    期望数量: ${expectedCount}<br>
+                    实际数量: ${filteredItems.length}<br>
+                    结果: ${passed ? '✓ 通过' : '✗ 失败'}
+                </div>
+            `;
+            
+            return passed;
+        }
+
+        // 测试4: 筛选不存在的分类
+        function testFilterNonExistentCategory() {
+            const category = '不存在的分类';
+            const filteredItems = testData.portfolio.filter(item => item.category === category);
+            
+            const expectedCount = 0;
+            const passed = filteredItems.length === expectedCount;
+            
+            testResults.innerHTML += `
+                <div class="test-result ${passed ? 'success' : 'error'}">
+                    <strong>测试4: 筛选不存在的分类</strong><br>
+                    期望数量: ${expectedCount}<br>
+                    实际数量: ${filteredItems.length}<br>
+                    结果: ${passed ? '✓ 通过' : '✗ 失败'}
+                </div>
+            `;
+            
+            return passed;
+        }
+
+        // 运行所有测试
+        function runAllTests() {
+            testResults.innerHTML = '<div class="test-result info">正在运行测试...</div>';
+            
+            const tests = [
+                testGetAllCategories,
+                testFilterByCategory,
+                testFilterAllCategory,
+                testFilterNonExistentCategory
+            ];
+            
+            let passedCount = 0;
+            tests.forEach(test => {
+                if (test()) passedCount++;
+            });
+            
+            const allPassed = passedCount === tests.length;
+            
+            testResults.innerHTML += `
+                <div class="test-result ${allPassed ? 'success' : 'error'}">
+                    <strong>测试总结</strong><br>
+                    总测试数: ${tests.length}<br>
+                    通过数: ${passedCount}<br>
+                    失败数: ${tests.length - passedCount}<br>
+                    最终结果: ${allPassed ? '✓ 所有测试通过' : '✗ 部分测试失败'}
+                </div>
+            `;
+        }
+
+        // 页面加载后运行测试
+        window.addEventListener('load', runAllTests);
+    </script>
+</body>
+</html>

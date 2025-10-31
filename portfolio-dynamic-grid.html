@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态作品集网格</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+
+        /* 分类导航样式 */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .category-btn {
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            background: #3498db;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .category-btn.active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .category-btn.active:hover {
+            background: #c0392b;
+        }
+
+        /* 作品网格样式 */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .portfolio-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .card-category {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tech-badge {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #ecf0f1;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .modal-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #5a6c7d;
+            margin-bottom: 20px;
+        }
+
+        .modal-tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .modal-tech-badge {
+            background: #3498db;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .modal-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .modal-link:hover {
+            background: #27ae60;
+        }
+
+        .modal-link.demo {
+            background: #e74c3c;
+        }
+
+        .modal-link.demo:hover {
+            background: #c0392b;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .portfolio-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .category-nav {
+                gap: 10px;
+            }
+            
+            .category-btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .portfolio-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .card-image {
+                height: 150px;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .card-image {
+                height: 180px;
+            }
+
+            .modal-image {
+                height: 200px;
+            }
+
+            .modal-links {
+                flex-direction: column;
+            }
+
+            .modal-link {
+                text-align: center;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>我的作品集</h1>
+            <p>展示我的创意项目和技术成果</p>
+        </header>
+
+        <main>
+            <!-- 分类导航 -->
+            <nav class="category-nav" id="categoryNav">
+                <!-- 分类按钮将通过JavaScript动态生成 -->
+            </nav>
+            
+            <!-- 作品网格 -->
+            <div id="portfolioGrid" class="portfolio-grid">
+                <div class="loading">正在加载作品...</div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="portfolioModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalImage" class="modal-image"></div>
+                <div id="modalCategory" class="card-category"></div>
+                <p id="modalDescription" class="modal-description"></p>
+                <div id="modalTechStack" class="modal-tech-stack"></div>
+                <div id="modalLinks" class="modal-links"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 作品数据
+        const portfolioData = {
+            "portfolio": [
+                {
+                    "id": 1,
+                    "title": "电商APP设计",
+                    "category": "UI设计",
+                    "image": "https://example.com/images/ecommerce-app.jpg",
+                    "description": "为某知名电商品牌设计的现代化移动端购物应用界面，注重用户体验和视觉美感，提升用户购物转化率。",
+                    "techStack": ["React", "Figma", "Adobe XD", "TypeScript"],
+                    "demoUrl": "https://demo.example.com/ecommerce-app",
+                    "githubUrl": "https://github.com/username/ecommerce-app",
+                    "completionDate": "2024-03-15",
+                    "featured": true,
+                    "tags": ["电商", "移动端", "用户体验", "界面设计"]
+                },
+                {
+                    "id": 2,
+                    "title": "企业品牌官网",
+                    "category": "网页设计",
+                    "image": "https://example.com/images/corporate-website.jpg",
+                    "description": "为科技公司设计的响应式企业官网，采用现代设计语言和最佳用户体验实践，展示公司产品和服务。",
+                    "techStack": ["HTML5", "CSS3", "JavaScript", "Vue.js", "Sass"],
+                    "demoUrl": "https://demo.example.com/corporate-site",
+                    "githubUrl": "https://github.com/username/corporate-website",
+                    "completionDate": "2024-02-28",
+                    "featured": true,
+                    "tags": ["企业网站", "响应式", "品牌形象", "SEO优化"]
+                },
+                {
+                    "id": 3,
+                    "title": "插画系列作品",
+                    "category": "插画",
+                    "image": "https://example.com/images/illustration-series.jpg",
+                    "description": "为儿童出版物创作的系列插画作品，展现独特的艺术风格和丰富的色彩表现力。",
+                    "techStack": ["Procreate", "Adobe Illustrator", "Photoshop"],
+                    "completionDate": "2024-01-20",
+                    "featured": false,
+                    "tags": ["儿童插画", "出版物", "数字艺术", "色彩设计"]
+                },
+                {
+                    "id": 4,
+                    "title": "品牌视觉识别系统",
+                    "category": "品牌设计",
+                    "image": "https://example.com/images/brand-identity.jpg",
+                    "description": "为初创公司打造完整的品牌视觉系统，包括Logo设计、色彩规范、字体选择和品牌应用指南。",
+                    "techStack": ["Adobe Illustrator", "InDesign", "品牌策略"],
+                    "completionDate": "2023-12-10",
+                    "featured": true,
+                    "tags": ["品牌设计", "视觉识别", "Logo设计", "品牌指南"]
+                },
+                {
+                    "id": 5,
+                    "title": "产品摄影作品集",
+                    "category": "摄影",
+                    "image": "https://example.com/images/product-photography.jpg",
+                    "description": "为电子产品品牌拍摄的产品摄影系列，突出产品特点和品牌调性，提升产品吸引力。",
+                    "techStack": ["摄影器材", "灯光布置", "后期处理", "Photoshop"],
+                    "completionDate": "2023-11-05",
+                    "featured": false,
+                    "tags": ["产品摄影", "商业摄影", "静物摄影", "后期制作"]
+                },
+                {
+                    "id": 6,
+                    "title": "3D产品展示动画",
+                    "category": "3D建模",
+                    "image": "https://example.com/images/3d-product-animation.jpg",
+                    "description": "为家具品牌创建的产品3D模型和展示动画，展示产品细节和使用场景。",
+                    "techStack": ["Blender", "3ds Max", "Substance Painter", "After Effects"],
+                    "demoUrl": "https://demo.example.com/3d-animation",
+                    "completionDate": "2023-10-18",
+                    "featured": false,
+                    "tags": ["3D建模", "产品动画", "渲染", "视觉效果"]
+                },
+                {
+                    "id": 7,
+                    "title": "移动银行应用",
+                    "category": "移动应用",
+                    "image": "https://example.com/images/banking-app.jpg",
+                    "description": "为银行机构设计的移动端银行应用，注重安全性和用户体验，提供完整的金融服务功能。",
+                    "techStack": ["React Native", "Node.js", "MongoDB", "Firebase"],
+                    "demoUrl": "https://demo.example.com/banking-app",
+                    "githubUrl": "https://github.com/username/banking-app",
+                    "completionDate": "2023-09-22",
+                    "featured": true,
+                    "tags": ["金融科技", "移动应用", "安全性", "用户体验"]
+                },
+                {
+                    "id": 8,
+                    "title": "用户体验研究报告",
+                    "category": "用户体验设计",
+                    "image": "https://example.com/images/ux-research.jpg",
+                    "description": "为电商平台进行的用户体验研究，包括用户访谈、可用性测试和数据分析，提出优化建议。",
+                    "techStack": ["用户研究", "数据分析", "原型设计", "用户测试"],
+                    "completionDate": "2023-08-30",
+                    "featured": false,
+                    "tags": ["用户研究", "可用性测试", "数据分析", "用户体验优化"]
+                }
+            ]
+        };
+
+        // DOM 元素
+        const portfolioGrid = document.getElementById('portfolioGrid');
+        const categoryNav = document.getElementById('categoryNav');
+        const modal = document.getElementById('portfolioModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalImage = document.getElementById('modalImage');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalTechStack = document.getElementById('modalTechStack');
+        const modalLinks = document.getElementById('modalLinks');
+
+        // 当前选中的分类
+        let currentCategory = '全部';
+
+        // 获取所有分类
+        function getAllCategories() {
+            const categories = ['全部'];
+            portfolioData.portfolio.forEach(item => {
+                if (!categories.includes(item.category)) {
+                    categories.push(item.category);
+                }
+            });
+            return categories;
+        }
+
+        // 渲染分类导航
+        function renderCategoryNav() {
+            const categories = getAllCategories();
+            categoryNav.innerHTML = '';
+            
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'category-btn';
+                if (category === currentCategory) {
+                    button.classList.add('active');
+                }
+                button.textContent = category;
+                button.addEventListener('click', () => filterByCategory(category));
+                categoryNav.appendChild(button);
+            });
+        }
+
+        // 根据分类筛选作品
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === category) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // 筛选作品
+            const filteredItems = category === '全部' 
+                ? portfolioData.portfolio 
+                : portfolioData.portfolio.filter(item => item.category === category);
+            
+            renderPortfolioGrid(filteredItems);
+        }
+
+        // 渲染作品网格
+        function renderPortfolioGrid(items = portfolioData.portfolio) {
+            portfolioGrid.innerHTML = '';
+            
+            if (items.length === 0) {
+                portfolioGrid.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #7f8c8d;">
+                        <h3>暂无作品</h3>
+                        <p>当前分类下没有找到作品</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'portfolio-card fade-in';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="card-image">${item.title}</div>
+                    <div class="card-content">
+                        <h3 class="card-title">${item.title}</h3>
+                        <span class="card-category">${item.category}</span>
+                        <p class="card-description">${item.description}</p>
+                        <div class="tech-stack">
+                            ${item.techStack.map(tech => 
+                                `<span class="tech-badge">${tech}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => openModal(item));
+                portfolioGrid.appendChild(card);
+            });
+        }
+
+        // 打开模态框
+        function openModal(item) {
+            modalTitle.textContent = item.title;
+            modalImage.textContent = item.title;
+            modalCategory.textContent = item.category;
+            modalDescription.textContent = item.description;
+            
+            // 渲染技术栈
+            modalTechStack.innerHTML = '';
+            item.techStack.forEach(tech => {
+                const badge = document.createElement('span');
+                badge.className = 'modal-tech-badge';
+                badge.textContent = tech;
+                modalTechStack.appendChild(badge);
+            });
+            
+            // 渲染链接
+            modalLinks.innerHTML = '';
+            if (item.demoUrl) {
+                const demoLink = document.createElement('a');
+                demoLink.href = item.demoUrl;
+                demoLink.target = '_blank';
+                demoLink.className = 'modal-link demo';
+                demoLink.textContent = '查看演示';
+                modalLinks.appendChild(demoLink);
+            }
+            
+            if (item.githubUrl) {
+                const githubLink = document.createElement('a');
+                githubLink.href = item.githubUrl;
+                githubLink.target = '_blank';
+                githubLink.className = 'modal-link';
+                githubLink.textContent = 'GitHub';
+                modalLinks.appendChild(githubLink);
+            }
+            
+            // 显示模态框
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // 关闭模态框
+        function closeModalHandler() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // 事件监听
+        closeModal.addEventListener('click', closeModalHandler);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModalHandler();
+            }
+        });
+
+        // 键盘事件
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModalHandler();
+            }
+        });
+
+        // 响应式网格调整
+        function updateGridLayout() {
+            const width = window.innerWidth;
+            const grid = document.querySelector('.portfolio-grid');
+            
+            if (width <= 480) {
+                grid.style.gridTemplateColumns = '1fr';
+            } else if (width <= 768) {
+                grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            } else if (width <= 1024) {
+                grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+            } else {
+                grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            }
+        }
+
+        // 初始化
+        window.addEventListener('load', () => {
+            renderCategoryNav();
+            renderPortfolioGrid();
+            updateGridLayout();
+        });
+
+        window.addEventListener('resize', updateGridLayout);
+    </script>
+</body>
+</html>
