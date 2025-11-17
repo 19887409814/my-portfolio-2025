@@ -54,11 +54,11 @@ class PortfolioManager {
         try {
             // 使用实际上传的图片文件
             const actualImages = [
-                "public/images/20251117_180014_test-photo.jpg",
-                "public/images/20251117_180014_test-icon.png", 
-                "public/images/20251117_180014_test-sample.png",
-                "public/images/20251117_180014_test-sample.jpg",
-                "public/images/20251117_180014_test-image.png"
+                "images/20251117_180014_test-photo.jpg",
+                "images/20251117_180014_test-icon.png", 
+                "images/20251117_180014_test-sample.png",
+                "images/20251117_180014_test-sample.jpg",
+                "images/20251117_180014_test-image.png"
             ];
 
             this.portfolioData = [
