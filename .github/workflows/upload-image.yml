@@ -1,0 +1,325 @@
+name: 🖼️ 自动图片处理上传工作流
+
+# 触发条件：当 /data/ 目录下有新图片文件被推送时
+on:
+  push:
+    paths:
+      - 'data/*.jpg'
+      - 'data/*.jpeg'
+      - 'data/*.png'
+      - 'data/*.gif'
+      - 'data/*.webp'
+    branches:
+      - main
+      - master
+  workflow_dispatch:  # 允许手动触发
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  image-processing:
+    runs-on: ubuntu-latest
+    name: 🖼️ 处理和移动图片文件
+    
+    steps:
+      # 步骤1: 检出代码
+      - name: 📥 检出仓库代码
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2  # 获取最近的提交以便检测变更
+        
+      # 步骤2: 设置环境变量和安装依赖
+      - name: 🔧 设置环境
+        run: |
+          echo "🔍 检查工作目录结构..."
+          echo "当前目录: $(pwd)"
+          echo "文件列表:"
+          ls -la
+          
+          echo ""
+          echo "📂 检查 /data/ 目录..."
+          if [ -d "data" ]; then
+            echo "data 目录存在，内容:"
+            ls -la data/
+          else
+            echo "data 目录不存在，将创建..."
+            mkdir -p data
+          fi
+          
+          echo ""
+          echo "📂 检查 /public/ 目录..."
+          if [ ! -d "public" ]; then
+            echo "创建 public 目录结构..."
+            mkdir -p public/images
+          else
+            echo "public 目录已存在，检查 images 子目录..."
+            if [ ! -d "public/images" ]; then
+              echo "创建 public/images 目录..."
+              mkdir -p public/images
+            fi
+          fi
+          
+          echo ""
+          echo "📊 设置权限..."
+          chmod -R 755 public/
+          ls -la public/
+      
+      # 步骤3: 安装图片处理依赖
+      - name: 🛠️ 安装ImageMagick和依赖
+        run: |
+          echo "🔍 检查系统包管理器..."
+          
+          # 更新包列表
+          sudo apt-get update
+          
+          # 安装ImageMagick和其他图片处理工具
+          echo "📦 安装ImageMagick..."
+          sudo apt-get install -y imagemagick identify jpegoptim pngquant optipng
+          
+          # 验证安装
+          echo "✅ 验证ImageMagick安装..."
+          convert --version
+          identify --version
+          
+          # 安装exiftool（用于获取图片元数据）
+          echo "📦 安装exiftool..."
+          sudo apt-get install -y libimage-exiftool-perl
+          
+          echo "✅ 所有依赖安装完成！"
+      
+      # 步骤4: 查找和移动图片文件
+      - name: 📁 查找和处理图片文件
+        run: |
+          echo "🔍 开始处理图片文件..."
+          echo "当前时间戳: $(date +'%Y%m%d_%H%M%S')"
+          
+          # 设置时间戳
+          TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
+          echo "时间戳变量: $TIMESTAMP"
+          
+          # 查找data目录中的图片文件
+          echo ""
+          echo "📋 查找图片文件..."
+          find data/ -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" -o -name "*.webp" \) 2>/dev/null || echo "⚠️ 未找到图片文件"
+          
+          # 处理每个图片文件
+          echo ""
+          echo "🔄 开始处理图片文件..."
+          MOVED_FILES=0
+          
+          for file in data/*.{jpg,jpeg,png,gif,webp}; do
+            if [ -f "$file" ]; then
+              echo ""
+              echo "📷 处理文件: $file"
+              
+              # 获取文件名和扩展名
+              filename=$(basename "$file")
+              extension="${filename##*.}"
+              basename="${filename%.*}"
+              
+              # 生成新文件名
+              new_name="${TIMESTAMP}_${basename}.${extension}"
+              target_path="public/images/$new_name"
+              
+              echo "🏷️  原始文件名: $filename"
+              echo "🏷️  新文件名: $new_name"
+              echo "📁 目标路径: $target_path"
+              
+              # 获取图片信息
+              if command -v identify &> /dev/null; then
+                echo "📊 图片信息:"
+                identify "$file" || echo "无法获取图片信息"
+              fi
+              
+              # 获取文件大小
+              file_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "unknown")
+              echo "📏 文件大小: $file_size bytes"
+              
+              # 移动文件
+              echo "📦 移动文件..."
+              cp "$file" "$target_path"
+              
+              # 验证移动结果
+              if [ -f "$target_path" ]; then
+                echo "✅ 文件移动成功: $target_path"
+                
+                # 从源目录删除文件（可选，根据需要决定是否保留原文件）
+                # rm "$file"
+                # echo "🗑️  已删除原文件: $file"
+                
+                MOVED_FILES=$((MOVED_FILES + 1))
+                
+                # 显示移动后的文件信息
+                if command -v identify &> /dev/null; then
+                  echo "📊 移动后图片信息:"
+                  identify "$target_path" || echo "无法获取移动后图片信息"
+                fi
+              else
+                echo "❌ 文件移动失败: $target_path"
+              fi
+            fi
+          done
+          
+          echo ""
+          echo "📈 处理统计:"
+          echo "📦 移动的文件数量: $MOVED_FILES"
+          echo "📂 public/images/ 目录内容:"
+          ls -la public/images/ || echo "目录为空"
+          
+          # 设置环境变量供后续步骤使用
+          echo "MOVED_FILES=$MOVED_FILES" >> $GITHUB_ENV
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+      
+      # 步骤5: 图片优化（可选）
+      - name: ⚡ 优化图片文件
+        run: |
+          echo "🚀 开始优化图片文件..."
+          OPTIMIZED_FILES=0
+          
+          for file in public/images/*.{jpg,jpeg,png,gif,webp}; do
+            if [ -f "$file" ]; then
+              echo ""
+              echo "⚡ 优化文件: $file"
+              
+              # 获取原始文件大小
+              original_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+              
+              # 根据文件类型进行优化
+              case "$file" in
+                *.jpg|*.jpeg)
+                  # JPEG优化
+                  echo "🎨 优化JPEG文件..."
+                  if command -v jpegoptim &> /dev/null; then
+                    jpegoptim --max=85 "$file" --quiet || echo "jpegoptim 优化失败"
+                  fi
+                  ;;
+                *.png)
+                  # PNG优化
+                  echo "🎨 优化PNG文件..."
+                  if command -v pngquant &> /dev/null; then
+                    pngquant --output "$file" --force --speed 1 "$file" || echo "pngquant 优化失败"
+                  fi
+                  if command -v optipng &> /dev/null; then
+                    optipng -o2 "$file" || echo "optipng 优化失败"
+                  fi
+                  ;;
+              esac
+              
+              # 获取优化后文件大小
+              optimized_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
+              
+              # 计算压缩比例
+              if [ "$original_size" -gt 0 ]; then
+                reduction=$((original_size - optimized_size))
+                percentage=$(( (reduction * 100) / original_size ))
+                echo "📊 优化结果: 原始: ${original_size}B → 优化后: ${optimized_size}B (减少: ${reduction}B, ${percentage}%)"
+              fi
+              
+              OPTIMIZED_FILES=$((OPTIMIZED_FILES + 1))
+            fi
+          done
+          
+          echo ""
+          echo "📈 优化统计:"
+          echo "⚡ 优化的文件数量: $OPTIMIZED_FILES"
+          
+          # 设置环境变量
+          echo "OPTIMIZED_FILES=$OPTIMIZED_FILES" >> $GITHUB_ENV
+      
+      # 步骤6: 提交更改
+      - name: 📝 配置Git用户信息
+        run: |
+          echo "⚙️ 配置Git用户信息..."
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          echo "✅ Git用户信息配置完成"
+      
+      # 步骤7: 提交和推送更改
+      - name: 🚀 提交和推送更改
+        run: |
+          echo "🔍 检查更改状态..."
+          git status
+          
+          echo ""
+          echo "📊 添加文件到Git..."
+          git add public/images/ || echo "⚠️ 没有找到要添加的图片文件"
+          
+          # 检查是否有变更需要提交
+          if git diff --staged --quiet; then
+            echo "ℹ️ 没有变更需要提交"
+          else
+            echo ""
+            echo "📝 创建提交..."
+            TIMESTAMP=${{ env.TIMESTAMP }}
+            COMMIT_MESSAGE="🖼️ 自动处理图片文件 ($TIMESTAMP)
+            
+            📦 移动文件: ${{ env.MOVED_FILES }} 个
+            ⚡ 优化文件: ${{ env.OPTIMIZED_FILES }} 个
+            ⏰ 处理时间: $(date)
+            🤖 提交者: GitHub Actions"
+            
+            git commit -m "$COMMIT_MESSAGE"
+            echo "✅ 提交创建成功"
+            
+            echo ""
+            echo "🚀 推送更改到仓库..."
+            git push origin main 2>/dev/null || git push origin master 2>/dev/null || echo "⚠️ 推送失败，可能需要配置权限"
+            
+            echo "✅ 推送完成"
+          fi
+      
+      # 步骤8: 生成处理报告
+      - name: 📋 生成处理报告
+        run: |
+          echo ""
+          echo "📋 ========== 图片处理工作流报告 =========="
+          echo "⏰ 执行时间: $(date)"
+          echo "🏷️  工作流: ${{ github.workflow }}"
+          echo "🌐 仓库: ${{ github.repository }}"
+          echo "📊 分支: ${{ github.ref_name }}"
+          echo "🔗 提交: ${{ github.sha }}"
+          echo ""
+          echo "📊 处理统计:"
+          echo "📦 移动的文件数量: ${{ env.MOVED_FILES }}"
+          echo "⚡ 优化的文件数量: ${{ env.OPTIMIZED_FILES }}"
+          echo "⏰ 时间戳: ${{ env.TIMESTAMP }}"
+          echo ""
+          echo "📂 public/images/ 目录内容:"
+          if [ -d "public/images" ]; then
+            ls -la public/images/ || echo "目录为空"
+            
+            # 显示文件详细信息
+            echo ""
+            echo "📊 文件详细信息:"
+            for file in public/images/*; do
+              if [ -f "$file" ]; then
+                file_size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "unknown")
+                file_name=$(basename "$file")
+                echo "📷 $file_name ($file_size bytes)"
+              fi
+            done
+          else
+            echo "public/images 目录不存在"
+          fi
+          echo ""
+          echo "🔗 查看处理的图片:"
+          echo "🌐 GitHub仓库: https://github.com/${{ github.repository }}"
+          echo "📁 Images目录: https://github.com/${{ github.repository }}/tree/main/public/images"
+          echo "📋 ========== 报告结束 =========="
+      
+      # 步骤9: 通知（可选）
+      - name: 📢 工作流完成通知
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "🎉 图片处理工作流执行成功！"
+            echo "✅ 成功移动 ${{ env.MOVED_FILES }} 个图片文件"
+            echo "⚡ 成功优化 ${{ env.OPTIMIZED_FILES }} 个图片文件"
+          else
+            echo "❌ 图片处理工作流执行失败"
+          fi
+          echo ""
+          echo "📊 状态: ${{ job.status }}"
+          echo "🔗 工作流链接: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
