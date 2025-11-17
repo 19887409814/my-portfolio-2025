@@ -52,102 +52,107 @@ class PortfolioManager {
 
     async loadPortfolioData() {
         try {
-            // 使用示例数据
+            // 使用实际上传的图片文件
+            const actualImages = [
+                "public/images/20251117_180014_test-photo.jpg",
+                "public/images/20251117_180014_test-icon.png", 
+                "public/images/20251117_180014_test-sample.png",
+                "public/images/20251117_180014_test-sample.jpg",
+                "public/images/20251117_180014_test-image.png"
+            ];
+
             this.portfolioData = [
                 {
                     id: 1,
-                    title: "电商APP设计",
-                    category: "UI设计",
-                    image: "https://via.placeholder.com/400x250/667eea/ffffff?text=E-commerce+App",
-                    description: "为某知名电商品牌设计的现代化移动端购物应用界面，注重用户体验和视觉美感，提升用户购物转化率。",
-                    techStack: ["React", "Figma", "Adobe XD", "TypeScript"],
-                    demoUrl: "https://demo.example.com/ecommerce-app",
-                    githubUrl: "https://github.com/username/ecommerce-app",
+                    title: "摄影作品展示",
+                    category: "摄影",
+                    image: actualImages[0],
+                    description: "高质量的商业摄影作品，展现产品细节和品牌特色，专业摄影技术与艺术审美的完美结合。",
+                    techStack: ["专业相机", "灯光设备", "后期处理"],
                     completionDate: "2024-03-15",
                     featured: true,
-                    tags: ["电商", "移动端", "用户体验", "界面设计"]
+                    tags: ["商业摄影", "产品展示", "品牌形象"]
                 },
                 {
                     id: 2,
-                    title: "企业品牌官网",
-                    category: "网页设计",
-                    image: "https://via.placeholder.com/400x250/764ba2/ffffff?text=Corporate+Website",
-                    description: "为科技公司设计的响应式企业官网，采用现代设计语言和最佳用户体验实践，展示公司产品和服务。",
-                    techStack: ["HTML5", "CSS3", "JavaScript", "Vue.js", "Sass"],
-                    demoUrl: "https://demo.example.com/corporate-site",
-                    githubUrl: "https://github.com/username/corporate-website",
+                    title: "图标设计作品",
+                    category: "UI设计", 
+                    image: actualImages[1],
+                    description: "现代化图标设计系列，简约而不简单，适用于移动应用和网站界面设计。",
+                    techStack: ["Figma", "Sketch", "Adobe Illustrator"],
                     completionDate: "2024-02-28",
                     featured: true,
-                    tags: ["企业网站", "响应式", "品牌形象", "SEO优化"]
+                    tags: ["图标", "UI设计", "界面元素"]
                 },
                 {
                     id: 3,
-                    title: "插画系列作品",
-                    category: "插画",
-                    image: "https://via.placeholder.com/400x250/f093fb/ffffff?text=Illustration+Series",
-                    description: "为儿童出版物创作的系列插画作品，展现独特的艺术风格和丰富的色彩表现力。",
-                    techStack: ["Procreate", "Adobe Illustrator", "Photoshop"],
+                    title: "创意视觉设计",
+                    category: "视觉设计",
+                    image: actualImages[2],
+                    description: "富有创意的视觉设计作品，色彩搭配和谐，视觉冲击力强，适合品牌宣传和推广。",
+                    techStack: ["Photoshop", "Illustrator", "色彩理论"],
                     completionDate: "2024-01-20",
                     featured: false,
-                    tags: ["儿童插画", "出版物", "数字艺术", "色彩设计"]
+                    tags: ["创意设计", "色彩", "视觉传达"]
                 },
                 {
                     id: 4,
-                    title: "品牌视觉识别系统",
+                    title: "商业样本设计",
                     category: "品牌设计",
-                    image: "https://via.placeholder.com/400x250/4facfe/ffffff?text=Brand+Identity",
-                    description: "为初创公司打造完整的品牌视觉系统，包括Logo设计、色彩规范、字体选择和品牌应用指南。",
-                    techStack: ["Adobe Illustrator", "InDesign", "品牌策略"],
+                    image: actualImages[3],
+                    description: "专业的商业样本设计，体现品牌价值和企业形象，适合各类商业用途和宣传材料。",
+                    techStack: ["InDesign", "品牌策略", "排版设计"],
+                    completionDate: "2023-12-10",
+                    featured: true,
+                    tags: ["商业设计", "品牌推广", "样本"]
+                },
+                {
+                    id: 5,
+                    title: "数字艺术创作",
+                    category: "数字艺术",
+                    image: actualImages[4],
+                    description: "数字媒体艺术创作，结合传统艺术理念与现代数字技术，展现独特的艺术风格。",
+                    techStack: ["数字绘画", "混合媒体", "艺术创作"],
+                    completionDate: "2023-11-25",
+                    featured: false,
+                    tags: ["数字艺术", "创作", "媒体混合"]
+                }
                     completionDate: "2023-12-10",
                     featured: true,
                     tags: ["品牌设计", "视觉识别", "Logo设计", "品牌指南"]
                 },
                 {
-                    id: 5,
-                    title: "产品摄影作品集",
-                    category: "摄影",
-                    image: "https://via.placeholder.com/400x250/43e97b/ffffff?text=Product+Photography",
-                    description: "为电子产品品牌拍摄的产品摄影系列，突出产品特点和品牌调性，提升产品吸引力。",
-                    techStack: ["摄影器材", "灯光布置", "后期处理", "Photoshop"],
-                    completionDate: "2023-11-05",
-                    featured: false,
-                    tags: ["产品摄影", "商业摄影", "静物摄影", "后期制作"]
-                },
-                {
                     id: 6,
-                    title: "3D产品展示动画",
-                    category: "3D建模",
-                    image: "https://via.placeholder.com/400x250/ff6b6b/ffffff?text=3D+Animation",
-                    description: "为家具品牌创建的产品3D模型和展示动画，展示产品细节和使用场景。",
-                    techStack: ["Blender", "3ds Max", "Substance Painter", "After Effects"],
-                    demoUrl: "https://demo.example.com/3d-animation",
+                    title: "界面原型设计",
+                    category: "UI设计",
+                    image: "https://picsum.photos/400/250?random=6",
+                    description: "移动应用界面原型设计，注重用户体验和交互流程，提供高保真原型和设计规范。",
+                    techStack: ["Figma", "Sketch", "原型设计", "交互设计"],
                     completionDate: "2023-10-18",
                     featured: false,
-                    tags: ["3D建模", "产品动画", "渲染", "视觉效果"]
+                    tags: ["原型设计", "交互设计", "移动端"]
                 },
                 {
                     id: 7,
-                    title: "移动银行应用",
-                    category: "移动应用",
-                    image: "https://via.placeholder.com/400x250/ffd166/ffffff?text=Banking+App",
-                    description: "为银行机构设计的移动端银行应用，注重安全性和用户体验，提供完整的金融服务功能。",
-                    techStack: ["React Native", "Node.js", "MongoDB", "Firebase"],
-                    demoUrl: "https://demo.example.com/banking-app",
-                    githubUrl: "https://github.com/username/banking-app",
+                    title: "品牌推广设计",
+                    category: "品牌设计",
+                    image: "https://picsum.photos/400/250?random=7",
+                    description: "完整的品牌推广设计方案，包括海报、传单、社交媒体素材等多种宣传物料。",
+                    techStack: ["Photoshop", "Illustrator", "品牌策略", "营销设计"],
                     completionDate: "2023-09-22",
                     featured: true,
-                    tags: ["金融科技", "移动应用", "安全性", "用户体验"]
+                    tags: ["品牌推广", "营销物料", "社交媒体"]
                 },
                 {
                     id: 8,
-                    title: "用户体验研究报告",
-                    category: "用户体验设计",
-                    image: "https://via.placeholder.com/400x250/06d6a0/ffffff?text=UX+Research",
-                    description: "为电商平台进行的用户体验研究，包括用户访谈、可用性测试和数据分析，提出优化建议。",
-                    techStack: ["用户研究", "数据分析", "原型设计", "用户测试"],
+                    title: "网站界面优化",
+                    category: "网页设计",
+                    image: "https://picsum.photos/400/250?random=8",
+                    description: "对现有网站进行界面优化和用户体验提升，提高页面加载速度和用户转化率。",
+                    techStack: ["UI优化", "性能优化", "用户体验", "数据分析"],
                     completionDate: "2023-08-30",
                     featured: false,
-                    tags: ["用户研究", "可用性测试", "数据分析", "用户体验优化"]
+                    tags: ["界面优化", "性能提升", "用户体验"]
                 }
             ];
             this.filteredData = [...this.portfolioData];
