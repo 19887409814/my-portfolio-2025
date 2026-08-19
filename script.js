@@ -11,7 +11,7 @@ if (hamburger && navMenu) {
 
 // 关闭移动端菜单当点击链接时
 document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    if (hamburger) hamburger.classList.remove('acitive');
+    if (hamburger) hamburger.classList.remove('active');
     if (navMenu) navMenu.classList.remove('active');
     
 }));
@@ -348,12 +348,12 @@ class PortfolioManager {
         const modalLinks = document.getElementById('modalLinks');
 
         if (modalTitle) modalTitle.textContent = item.title;
-        if (modalImage) modalImage.innerHTML = '<img src="${item.image}" alt="${item.title}" style="width:100%; border- radius: 8px;">';
-        if (modalCategory) modalImage.innerHTML = item.category;
+        if (modalImage) modalImage.innerHTML = '<img src="${item.image}" alt="${item.title}" style="width:100%; border-radius: 8px;">';
+        if (modalCategory) modalCategory.textContent = item.category;
         if (modalDescription) modalDescription.textContent = item.description;
 
         // 技术栈
-        if(moda1TechStack) {
+        if(modalTechStack) {
         modalTechStack.innerHTML = item.techStack.map(tech => 
             `<span class="modal-tech-badge">${tech}</span>`
         ).join('');
