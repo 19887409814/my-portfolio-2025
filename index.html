@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>动态作品集网站</title>
+    <meta name="description" content="个人作品集网站 - 前端开发工程师与UI设计师，展示HTML,CSS,JavaScript,React项目案例。">
+    <meta name="keywords" content="作品集，前端开发，UI设计，React,JavaScript,个人网站">
+    <meta name="author" content="刘宇航">
+
+    <title>我的作品集 | 前端开发与设计</title>
+
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https:// cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar">
+    <nav class="navbar" aria-label="主导航">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="#home">我的作品集</a>
+                <a href="#" class="logo-link">我的作品集</a>
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
@@ -216,11 +222,24 @@
                         </div>
                     </div>
                 </div>
-                <form class="contact-form">
-                    <input type="text" placeholder="您的姓名" required>
-                    <input type="email" placeholder="您的邮箱" required>
-                    <textarea placeholder="您的消息" rows="5" required></textarea>
-                    <button type="submit">发送消息</button>
+                <form class="contact-form" id="contactForm">
+                    <
+                    div class="form-group">
+                        <label for="name" class="sr-only">您的姓名</label>
+                        <input type="text" id="name" name="name" placeholder="您的姓名" required autoComplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="sr-only">您的邮箱</label>
+                        <input type="email" id="email" name="email" placeholder="您的邮箱" required autoComplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="message" class="sr-only">您的消息</label>
+                        <textarea id="message" placeholder="您的消息" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-text">发送消息</span>
+                        <span class="btn-loading" style="display: none;">发送中...</span>
+                        <button>
                 </form>
             </div>
         </div>
@@ -238,6 +257,6 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

@@ -2,20 +2,24 @@
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
+if (hamburger && navMenu) {
+ hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');
     navMenu.classList.toggle('active');
 });
+}
 
 // 关闭移动端菜单当点击链接时
 document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navMenu.classList.remove('active');
+    if (hamburger) hamburger.classList.remove('acitive');
+    if (navMenu) navMenu.classList.remove('active');
+    
 }));
 
 // 滚动时改变导航栏样式
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
+    if (navbar) {
     if (window.scrollY > 100) {
         navbar.style.background = 'rgba(255, 255, 255, 0.98)';
         navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
@@ -23,13 +27,15 @@ window.addEventListener('scroll', () => {
         navbar.style.background = 'rgba(255, 255, 255, 0.95)';
         navbar.style.boxShadow = 'none';
     }
+}
 });
 
 // 平滑滚动到指定部分
 function scrollToSection(sectionId) {
-    document.getElementById(sectionId).scrollIntoView({
-        behavior: 'smooth'
-    });
+    const element = document.getElementById(sectionId);
+    if (element){
+        element.scrollIntoView({ behavior: 'smooth'});
+    }
 }
 
 // 作品集数据管理
@@ -116,10 +122,6 @@ class PortfolioManager {
                     completionDate: "2023-11-25",
                     featured: false,
                     tags: ["数字艺术", "创作", "媒体混合"]
-                }
-                    completionDate: "2023-12-10",
-                    featured: true,
-                    tags: ["品牌设计", "视觉识别", "Logo设计", "品牌指南"]
                 },
                 {
                     id: 6,
@@ -164,8 +166,9 @@ class PortfolioManager {
 
     renderCategoryButtons() {
         const categoryNav = document.getElementById('categoryNav');
+        if (!categoryNav) return;
+
         const categories = ['all', ...new Set(this.portfolioData.map(item => item.category))];
-        
         categoryNav.innerHTML = categories.map(category => {
             const categoryName = category === 'all' ? '全部作品' : category;
             const isActive = category === this.currentCategory ? 'active' : '';
@@ -179,6 +182,7 @@ class PortfolioManager {
 
     renderPortfolioGrid() {
         const portfolioGrid = document.getElementById('portfolioGrid');
+        if (!portfolioGrid) return;
         
         if (this.filteredData.length === 0) {
             portfolioGrid.innerHTML = `
@@ -194,7 +198,7 @@ class PortfolioManager {
         portfolioGrid.innerHTML = this.filteredData.map(item => `
             <div class="portfolio-card fade-in" data-id="${item.id}" data-category="${item.category}">
                 <div class="card-image">
-                    ${item.title}
+                     <img src="${item.image}" alt="${item.title}" style="width:100%; height:100%; object-fit:cover;">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">${item.title}</h3>
@@ -218,7 +222,9 @@ class PortfolioManager {
 
     setupEventListeners() {
         // 分类筛选
-        document.getElementById('categoryNav').addEventListener('click', (e) => {
+        const categoryNav = document.getElementById('categoryNav');
+        if (categoryNav) {
+            categoryNav.addEventListener('click',(e) => {
             if (e.target.classList.contains('category-btn')) {
                 const category = e.target.getAttribute('data-category');
                 this.filterByCategory(category);
@@ -230,10 +236,12 @@ class PortfolioManager {
                 e.target.classList.add('active');
             }
         });
+    }
 
         // 搜索功能
         const searchInput = document.getElementById('searchInput');
         let searchTimeout;
+        if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
@@ -241,25 +249,29 @@ class PortfolioManager {
                 this.applyFilters();
             }, 300);
         });
+    }
 
         // 排序功能
         const sortSelect = document.getElementById('sortSelect');
+        if (sortSelect) {
         sortSelect.addEventListener('change', (e) => {
             this.currentSort = e.target.value;
             this.applyFilters();
         });
+    }
 
         // 模态框关闭
-        document.getElementById('closeModal').addEventListener('click', () => {
-            this.closeModal();
-        });
+       const closeBtn = document.getElementById('closeModal');
+       if (closeBtn) {
+           closeBtn.addEventListener('click',() =>{this.closeModal(); });
+       }
 
         // ESC键关闭模态框
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.closeModal();
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
+                if (hamburger) hamburger.classList.remove('active');
+                if (navMenu) navMenu.classList.remove('active');
             }
         });
 
@@ -297,12 +309,14 @@ class PortfolioManager {
 
         // 排序
         filtered = this.sortData(filtered);
-
         this.filteredData = filtered;
         this.renderPortfolioGrid();
     }
 
     sortData(data) {
+        //创建副本以避免修改原数组
+        const sortedData = [...data];
+
         switch (this.currentSort) {
             case 'date-desc':
                 return data.sort((a, b) => new Date(b.completionDate) - new Date(a.completionDate));
@@ -333,15 +347,17 @@ class PortfolioManager {
         const modalTechStack = document.getElementById('modalTechStack');
         const modalLinks = document.getElementById('modalLinks');
 
-        modalTitle.textContent = item.title;
-        modalImage.innerHTML = item.title;
-        modalCategory.textContent = item.category;
-        modalDescription.textContent = item.description;
+        if (modalTitle) modalTitle.textContent = item.title;
+        if (modalImage) modalImage.innerHTML = '<img src="${item.image}" alt="${item.title}" style="width:100%; border- radius: 8px;">';
+        if (modalCategory) modalImage.innerHTML = item.category;
+        if (modalDescription) modalDescription.textContent = item.description;
 
         // 技术栈
+        if(moda1TechStack) {
         modalTechStack.innerHTML = item.techStack.map(tech => 
             `<span class="modal-tech-badge">${tech}</span>`
         ).join('');
+    }
 
         // 链接
         modalLinks.innerHTML = '';
@@ -352,18 +368,23 @@ class PortfolioManager {
             modalLinks.innerHTML += `<a href="${item.githubUrl}" target="_blank" class="modal-link">GitHub</a>`;
         }
 
+        if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        }
     }
 
     closeModal() {
         const modal = document.getElementById('portfolioModal');
+        if (modal) {
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
+        }
     }
 
     showErrorMessage(message) {
         const portfolioGrid = document.getElementById('portfolioGrid');
+        if (portfolioGrid) {
         portfolioGrid.innerHTML = `
             <div class="error-message">
                 <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 1rem;"></i>
@@ -373,6 +394,7 @@ class PortfolioManager {
             </div>
         `;
     }
+}
 }
 
 // 技能进度条动画
@@ -398,23 +420,21 @@ function animateSkillBars() {
 }
 
 // 表单提交处理
-document.querySelector('.contact-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
+const contactForm = document.querySelector('.contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit',function (e) {
+        e.preventDefault();
     // 获取表单数据
     const formData = new FormData(this);
     const data = Object.fromEntries(formData);
-    
     // 这里可以添加实际的表单提交逻辑
     console.log('表单数据:', data);
-    
     // 显示成功消息
     alert('消息发送成功！我会尽快回复您。');
-    
     // 重置表单
     this.reset();
 });
-
+}
 // 视差滚动效果
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
